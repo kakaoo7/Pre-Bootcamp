@@ -13,7 +13,6 @@
 
 		#player {
 			position: absolute;
-			background-image: url(./player1.png);
 			background-repeat: no-repeat;
 			background-size: contain;
 			width: 70px;
@@ -22,7 +21,6 @@
 
 		#enemyPlane > div {
 			position: absolute;
-			background-image: url(./enemy1.png);
 			background-repeat: no-repeat;
 			background-size: contain;
 			width: 70px;
@@ -33,12 +31,25 @@
 			margin: 10px 5px;
 		}
 
+		#missile > div {
+			position: absolute;
+			box-sizing: border-box;
+			border-left: 1px solid yellow;
+			border-right: 1px solid yellow;
+			background-color: red;
+			width: 2px;
+			height: 10px;
+		}
+
+
 	</style>
 
 	<div id="ocean">
 		<div id="start">
 		</div>
 		<div id="enemyPlane">
+		</div>
+		<div id="missile">
 		</div>
 	</div>
 	<button id="background">Change Background Image</button>
@@ -54,32 +65,33 @@
 		let enemies = [
 			{
 				left: 100,
-				top: 150
+				top: 100
 			},
 
 			{
 				left: 300,
-				top: 150
+				top: 100
 			},
 
 			{
 				left: 500,
-				top: 150
+				top: 100
 			},
 
 			{
 				left: 700,
-				top: 150
+				top: 100
 			}
 			
 		];
 
+		let missiles = [];
 		let background = 1;
 		let playerCharacter = 1;
 		let enemyCharacter = 1;
 
 		const drawPlayer = () => {
-			let playerPosition = `<div id='player' style='left:${player.left}px; top:${player.top}px'></div>`;
+			let playerPosition = `<div id='player' style='left:${player.left}px; top:${player.top}px; background-image:url(./player${playerCharacter}.png);'></div>`;
 			console.log(playerPosition);
 			document.getElementById("start").innerHTML = playerPosition;
 		};
@@ -87,24 +99,35 @@
 		const drawEnemies = () => {
 			let enemyPosition = "";
 			for (let i = 0; i < enemies.length; i++) {
-				enemyPosition += `<div class='enemies' style='left:${enemies[i].left}px; top:${enemies[i].top}px'></div>`;
+				enemyPosition += `<div class='enemies' style='left:${enemies[i].left}px; top:${enemies[i].top}px; background-image:url(./enemy${enemyCharacter}.png);'></div>`;
 			}
-			console.log(enemyPosition);
 			document.getElementById("enemyPlane").innerHTML = enemyPosition;
 		};
-		
-		drawPlayer();
-		drawEnemies();
+
+		const moveEnemies = () => {
+			
+			for (let i = 0; i < enemies.length; i++) {
+				if (enemies[i].top < 600) {
+					enemies[i].top += 5;
+				}
+			}
+		};
+
+		const shootMissiles = () => {
+
+		}
 
 		document.addEventListener('keydown', function(e) {
-			if (e.keyCode === 37 && player.left > 50) {
-				player.left-= 15;
-			} else if (e.keyCode === 39 && player.left < 800) {
+			if (e.keyCode === 37 && player.left > 50) { //left
+				player.left-= 15; 
+			} else if (e.keyCode === 39 && player.left < 800) { //right
 				player.left+= 15;
-			} else if (e.keyCode === 38 && player.top > 500) {
+			} else if (e.keyCode === 38 && player.top > 500) { //up
 				player.top-= 15;
-			} else if (e.keyCode === 40 && player.top < 610) {
+			} else if (e.keyCode === 40 && player.top < 610) { // down
 				player.top+= 15;
+			} else if (e.keyCode === 32) { //firing missile
+				missiles
 			}
 			drawPlayer();
 		})
@@ -138,6 +161,18 @@
 			}
 		})
 
+		function gameLoop() {
+			console.log("game is running!");
+
+			drawPlayer();
+			drawEnemies();
+			moveEnemies();
+
+			setTimeout(gameLoop, 1000);
+		}
+
+		gameLoop();
 	</script>
 </body>
 </html>
+
