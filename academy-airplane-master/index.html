@@ -55,6 +55,7 @@
 	<button id="background">Change Background Image</button>
 	<button id="playerCharacter">Change Player Plane</button>
 	<button id="enemyCharacter">Change Enemy Plane</button>
+	<button id="speedUp">Increase Game Speed</button>
 
 	<script>
 		let player = {
@@ -89,6 +90,7 @@
 		let background = 1;
 		let playerCharacter = 1;
 		let enemyCharacter = 1;
+		let gameSpeed = 1000;
 
 		const drawPlayer = () => {
 			let playerPosition = `<div id='player' style='left:${player.left}px; top:${player.top}px; background-image:url(./player${playerCharacter}.png);'></div>`;
@@ -113,8 +115,18 @@
 			}
 		};
 
-		const shootMissiles = () => {
+		const drawMissiles = () => {
+			let missile = "";
+			for (let i = 0; i < missiles.length; i++) {
+				missile += `<div style='left:${missiles[i].left}px; top:${missiles[i].top}px'></div>`;
+				document.getElementById('missile').innerHTML = missile;
+			}
+		}
 
+		const moveMissiles = () => {
+			for (let i = 0; i < missiles.length; i++) {
+				missiles[i].top -= 30;
+			}
 		}
 
 		document.addEventListener('keydown', function(e) {
@@ -127,9 +139,10 @@
 			} else if (e.keyCode === 40 && player.top < 610) { // down
 				player.top+= 15;
 			} else if (e.keyCode === 32) { //firing missile
-				missiles
+				missiles.push({left:(player.left+34), top:(player.top-8)});
 			}
 			drawPlayer();
+			drawMissiles();
 		})
 
 		document.getElementById("background").addEventListener('click', function() {
@@ -139,6 +152,7 @@
 				background = 1;	
 			}
 			document.getElementById("ocean").style.backgroundImage = `url(./b${background}.jpg)`;
+			enemies = [{left: 100, top: 100},{left: 300, top: 100},{left: 500, top: 100},{left: 700, top: 100}];
 		})
 
 		document.getElementById("playerCharacter").addEventListener('click', function() {
@@ -160,6 +174,12 @@
 				document.getElementsByClassName("enemies")[i].style.backgroundImage = `url(./enemy${enemyCharacter}.png)`;
 			}
 		})
+		
+		document.getElementById("speedUp").addEventListener('click', function() {
+			if (gameSpeed > 200) {
+				gameSpeed -= 200;
+			}
+		})
 
 		function gameLoop() {
 			console.log("game is running!");
@@ -167,11 +187,22 @@
 			drawPlayer();
 			drawEnemies();
 			moveEnemies();
+			setTimeout(gameLoop, gameSpeed);
+		}
 
-			setTimeout(gameLoop, 1000);
+		function removeMissile() {
+			for (let i = 0; i < missiles.length; i++) {
+				let offMissile = document.getElementById('missile').childNodes[i];
+				if (missiles[i].top < 0) {
+					missiles.splice(i, 1);
+				}
+			}
 		}
 
 		gameLoop();
+		setInterval(function(){drawMissiles(); moveMissiles();}, 100);
+		setInterval(removeMissile, 1000);
+		
 	</script>
 </body>
 </html>
